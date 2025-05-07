@@ -17,7 +17,7 @@ class _CategoryScreenState extends State<CategoryScreen>
   void initState() {
     CategoryDb().getCategories().then((value) {
       print('Categories get');
-      print(value);
+      print(value.toString());
     });
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
