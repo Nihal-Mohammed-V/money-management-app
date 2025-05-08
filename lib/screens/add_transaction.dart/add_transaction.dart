@@ -12,8 +12,14 @@ class AddTransaction extends StatefulWidget {
 
 class _AddTransactionState extends State<AddTransaction> {
   DateTime? _selectedDate;
-  CategoryType? _selectedCategory;
+  CategoryType? _selectedCategorytype;
   CategoryModel? _selectedCategoryModel;
+  String? _categoryId;
+  @override
+  void initState() {
+    _selectedCategorytype = CategoryType.income;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +81,14 @@ class _AddTransactionState extends State<AddTransaction> {
                   Row(
                     children: [
                       Radio(
-                        value: false,
-                        groupValue: CategoryType.income,
-                        onChanged: (newValue) {},
+                        value: CategoryType.income,
+                        groupValue: _selectedCategorytype,
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedCategorytype = CategoryType.income;
+                            _categoryId = null;
+                          });
+                        },
                       ),
                       Text('Income'),
                     ],
@@ -85,9 +96,14 @@ class _AddTransactionState extends State<AddTransaction> {
                   Row(
                     children: [
                       Radio(
-                        value: false,
-                        groupValue: CategoryType.expense,
-                        onChanged: (newValue) {},
+                        value: CategoryType.expense,
+                        groupValue: _selectedCategorytype,
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedCategorytype = CategoryType.expense;
+                            _categoryId = null;
+                          });
+                        },
                       ),
                       Text('Expense'),
                     ],
@@ -95,13 +111,27 @@ class _AddTransactionState extends State<AddTransaction> {
                 ],
               ),
               SizedBox(height: 16),
-              DropdownButton(
+
+              DropdownButton<String>(
                 hint: Text('Select Category'),
+                value: _categoryId,
                 items:
-                    CategoryDb().expenseCategoryList.value.map((e) {
-                      return DropdownMenuItem(value: e.id, child: Text(e.name));
-                    }).toList(),
-                onChanged: (selectedValue) {},
+                    (_selectedCategorytype == CategoryType.income
+                            ? CategoryDb().incomeCategoryList
+                            : CategoryDb().expenseCategoryList)
+                        .value
+                        .map((e) {
+                          return DropdownMenuItem(
+                            value: e.id,
+                            child: Text(e.name),
+                          );
+                        })
+                        .toList(),
+                onChanged: (selectedValue) {
+                  setState(() {
+                    _categoryId = selectedValue;
+                  });
+                },
               ),
               SizedBox(height: 16),
               ElevatedButton(onPressed: () {}, child: Text('Submit')),
