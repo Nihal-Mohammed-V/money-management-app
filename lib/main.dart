@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_management_app/models/category/category_model.dart';
+import 'package:money_management_app/screens/add_transaction.dart/add_transaction.dart';
 import 'package:money_management_app/screens/home/home_screen.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -20,6 +21,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: HomeScreen());
+    return MaterialApp(
+      home: HomeScreen(),
+      routes: {AddTransaction.routeName: (ctx) => AddTransaction()},
+    );
   }
 }
