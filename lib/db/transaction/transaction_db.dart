@@ -7,6 +7,7 @@ const TRANSACTION_DN_NAME = 'transaction-db';
 abstract class TransactionDbFunctions {
   Future<void> addTransaction(TransactionModel obj);
   Future<List<TransactionModel>> getAllTransaction();
+  Future<void> deleteTransaction(String id);
 }
 
 class TransactionDB implements TransactionDbFunctions {
@@ -38,5 +39,12 @@ class TransactionDB implements TransactionDbFunctions {
   Future<List<TransactionModel>> getAllTransaction() async {
     final _db = await Hive.openBox<TransactionModel>(TRANSACTION_DN_NAME);
     return _db.values.toList();
+  }
+
+  @override
+  Future<void> deleteTransaction(String id) async {
+    final _db = await Hive.openBox<TransactionModel>(TRANSACTION_DN_NAME);
+    await _db.delete(id);
+    refresh();
   }
 }
