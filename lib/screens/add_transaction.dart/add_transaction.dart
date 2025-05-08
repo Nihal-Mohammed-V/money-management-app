@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:money_management_app/db/category/category_db.dart';
+import 'package:money_management_app/db/transaction/transaction_db.dart';
 import 'package:money_management_app/models/category/category_model.dart';
+import 'package:money_management_app/models/transaction/transaction_model.dart';
 
 class AddTransaction extends StatefulWidget {
   static const routeName = 'add-transaction';
@@ -15,6 +17,9 @@ class _AddTransactionState extends State<AddTransaction> {
   CategoryType? _selectedCategorytype;
   CategoryModel? _selectedCategoryModel;
   String? _categoryId;
+
+  final _purposeTextEditingController = TextEditingController();
+  final _amountTextEditingController = TextEditingController();
   @override
   void initState() {
     _selectedCategorytype = CategoryType.income;
@@ -30,6 +35,7 @@ class _AddTransactionState extends State<AddTransaction> {
           child: Column(
             children: [
               TextFormField(
+                controller: _purposeTextEditingController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Purpose',
@@ -37,6 +43,7 @@ class _AddTransactionState extends State<AddTransaction> {
               ),
               SizedBox(height: 16),
               TextFormField(
+                controller: _amountTextEditingController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
@@ -122,6 +129,9 @@ class _AddTransactionState extends State<AddTransaction> {
                         .value
                         .map((e) {
                           return DropdownMenuItem(
+                            onTap: () {
+                              _selectedCategoryModel = e;
+                            },
                             value: e.id,
                             child: Text(e.name),
                           );
@@ -140,5 +150,40 @@ class _AddTransactionState extends State<AddTransaction> {
         ),
       ),
     );
+  }
+
+  Future<void> addTransaction() async {
+    final _purposeText = _purposeTextEditingController.text;
+    final _amountText = _amountTextEditingController.text;
+    if (_purposeText.isEmpty) {
+      return;
+    }
+    if (_amountText.isEmpty) {
+      return;
+    }
+    if (_categoryId == null) {
+      return;
+    }
+    if (_selectedDate == null) {
+      return;
+    }
+    final _parsedAmount = double.tryParse(_amountText);
+    if (_parsedAmount == null) {
+      return;
+    }
+    if (_selectedCategoryModel == null) {
+      return;
+    }
+    //_selectedDate
+    //_selectedCategorytype
+    //_categoryId
+    final _model = TransactionModel(
+      purpose: _purposeText,
+      amount: _parsedAmount,
+      date: _selectedDate!,
+      type: _selectedCategorytype!,
+      category: _selectedCategoryModel!,
+    );
+    TransactionDB.instance.addTransaction(_model);
   }
 }
