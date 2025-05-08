@@ -144,7 +144,12 @@ class _AddTransactionState extends State<AddTransaction> {
                 },
               ),
               SizedBox(height: 16),
-              ElevatedButton(onPressed: () {}, child: Text('Submit')),
+              ElevatedButton(
+                onPressed: () {
+                  addTransaction();
+                },
+                child: Text('Submit'),
+              ),
             ],
           ),
         ),
@@ -184,6 +189,8 @@ class _AddTransactionState extends State<AddTransaction> {
       type: _selectedCategorytype!,
       category: _selectedCategoryModel!,
     );
-    TransactionDB.instance.addTransaction(_model);
+    await TransactionDB.instance.addTransaction(_model);
+    Navigator.of(context).pop();
+    TransactionDB.instance.refresh();
   }
 }
